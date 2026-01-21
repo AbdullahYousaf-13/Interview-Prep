@@ -199,49 +199,217 @@ No data copying occurs
 
 Python uses name binding. Variables reference objects rather than storing values directly.
 
-#### Block 2 – Stack vs Heap (Python Reality)
+#### BLOCK 2 — Stack vs Heap (Python Reality)
 
-**Stack**
+##### 1️⃣ Big Picture (Very Important)
+
+In Python, memory management works very differently from C/C++.
+
+👉 Python does NOT store objects on the stack.
+👉 Only references (names) live on the stack.
+👉 All actual objects live on the heap.
+
+This is non-negotiable and often tested.
+
+##### 2️⃣ What Is the Stack in Python?
+
+🔹 Stack = Function Call Stack (Frames)
+
+The stack in Python contains:
 
 - Function call frames
+- Local variable references
+- Parameters (as references)
+- Return addresses
 
-- Local references
-
-- Fast allocation and deallocation
-
-**Heap**
-
-- All Python objects live here
-
-- Lists, dicts, strings, custom objects
-
-Python does not allocate objects on the stack like C++. Only references exist in stack frames.
+Each time a function is called, Python creates a stack frame.
 
 **Code:**
 
     def foo():
         x = 10
         y = [1, 2, 3]
-        return y
+        bar(y)
+    
+    def bar(z):
+        z.append(4)
+    
+    foo()
 
-**Explanation:**
+Stack View (Simplified)
+|------------------|
+| bar() frame      |
+| z  → [1,2,3]     |
+|------------------|
+| foo() frame      |
+| x  → 10          |
+| y  → [1,2,3]     |
+|------------------|
 
-`x` and `y` are references in the stack frame
 
-The `int` and `list` objects live on the heap
+⚠️ Notice
 
-Stack frame is destroyed after function return
+`x`, `y`, `z` are references
 
-Objects persist if referenced
+The actual `10` and `[1,2,3]` are NOT on stack
 
-**Interview Question**
+##### 3️⃣ What Is the Heap in Python?
 
-Does Python store variables on stack or heap?
+🔹 Heap = All Python Objects
 
-Correct Answer:
-Python objects are allocated on the heap. Stack frames only hold references.
+The heap stores:
 
-Block 3 – Mutability & References (Critical)
+- Integers
+- Floats
+- Strings
+- Lists
+- Tuples
+- Dictionaries
+- Sets
+- Custom class objects
+- Functions themselves
+
+**Heap View**
+
+`Heap Memory:
+  10
+  [1, 2, 3, 4]`
+
+The stack only points to these objects.
+
+##### 4️⃣ Why Python Cannot Use Stack Objects Like C++
+
+C++ (Stack Allocation)
+   
+    int x = 10;        // stored directly on stack
+    
+    Python (Reference Model)
+    x = 10
+
+Python must support:
+
+- Dynamic typing
+- Objects of unknown size
+- Automatic memory management
+- Garbage collection
+
+➡️ Stack allocation is too rigid for Python.
+
+##### 5️⃣ “Only References Live on Stack” — Explained Clearly
+
+**Code:**
+
+    a = 5
+    b = a
+
+What Really Happens
+
+`Stack:
+  a → 5
+  b → 5`
+
+`Heap:
+  5`
+
+Both `a` and `b` point to the same object.
+
+##### 6️⃣ Mutable vs Immutable Objects (Critical Interview Point)
+
+**Immutable Example**
+
+**Code:**
+
+    a = 10
+    b = a
+    b = 20
+
+What happens?
+
+`10` remains unchanged
+
+`b` now points to a new object
+
+`Stack:
+  a → 10
+  b → 20`
+
+`Heap:
+  10
+  20`
+
+**Mutable Example**
+
+**Code:**
+
+    a = [1, 2]
+    b = a
+    b.append(3)
+
+**Result:**
+
+`print(a)  # [1, 2, 3]`
+
+**Why?**
+
+- Both references point to same heap object
+- Mutation happens in heap
+
+##### 7️⃣ Function Calls — Stack + Heap Interaction
+
+**Code:**
+
+    def modify(lst):
+        lst.append(99)
+    
+    nums = [1, 2, 3]
+    modify(nums)
+
+**Memory Explanation:**
+
+- nums → heap list
+- lst → same heap list
+- Stack frame destroyed after function returns
+- Heap object remains alive
+
+##### 8️⃣ Garbage Collection & Reference Counting
+
+Python primarily uses reference counting.
+
+**Code:**
+
+    x = [1, 2, 3]
+    y = x
+    del x
+
+Heap object still exists because:
+
+Reference count = 1
+
+Only when:
+
+`del y`
+
+➡️ Object becomes eligible for garbage collection.
+
+##### 9️⃣ Why Stack Access Is “Fast” in Python
+
+**Stack access is fast because:**
+
+- Stack frames are small
+- They only store references
+- No object traversal required
+
+**Heap access is slower because:**
+
+- Indirection through references
+- Memory fragmentation
+- GC tracking
+
+**🔑 Interview-Ready Summary**
+
+In Python, the stack stores function call frames and local variable references, while all actual objects live on the heap. Python never places objects directly on the stack like C++. Variables are merely names pointing to heap-allocated objects. This design supports dynamic typing, mutability, and garbage collection.
+
+#### Block 3 – Mutability & References (Critical)
 
 **Immutable Types:**
 
@@ -296,7 +464,7 @@ Mutable objects can be modified in place.
 
 **Explanation:**
 
-- Python passes object references
+- Python passes object references by value
 - Function mutates the original list
 
 **Backend Impact**
@@ -305,13 +473,20 @@ Mutable objects can be modified in place.
 - Session corruption
 - Cache poisoning
 
-#### Block 4 – Reference Counting & Garbage Collection
+**🔑 Interview Level Summary**
 
-**Primary Memory Management**
+For immutable types, any modification creates a new object and rebinds the variable instead of mutating the original.
 
-- Reference counting
-- Cyclic garbage collection (secondary)
-- Python frees objects automatically when reference count reaches zero.
+#### BLOCK 4 — Reference Counting & Garbage Collection (Python Reality)
+
+##### 1️⃣ Python’s Primary GC: Reference Counting
+
+**Core Rule:**
+
+- Every Python object keeps a counter of how many references point to it.
+- If the count becomes zero → Python immediately frees the object.
+
+##### 2️⃣ Understanding sys.getrefcount()
 
 **Code:**
 
@@ -326,21 +501,214 @@ Mutable objects can be modified in place.
     del b
     print(sys.getrefcount(a))
 
-**Explanation:**
+##### 3️⃣ Line-by-Line Explanation (Memory Level)
 
-- Each new reference increases count
-- Deleting references decreases count
-- Object is freed when count becomes zero
+**Line 1:**
 
-**Why Cycles Matter:**
+    a = []
 
-Objects referencing each other cannot be freed by reference counting alone. Python’s cyclic GC handles this.
+**Memory:**
 
-**Backend Relevance:**
+Stack:
+  `a → L1`
 
-- Memory leaks in long-running services
-- Increased memory under high concurrency
-- Reason services are periodically restarted
+Heap:
+  `L1: []`
+
+
+References to L1:
+
+`a`
+
+Temporary reference inside `getrefcount()`
+
+**Line 2:**
+
+    print(sys.getrefcount(a))
+
+**⚠️ Important Trap**
+
+`getrefcount(a)` itself adds one temporary reference.
+
+So if you see:
+
+`2`
+
+It means:
+
+`1` reference from `a`
+
+`1` temporary reference from function call
+
+**Line 3:**
+
+    b = a
+
+**Now:**
+
+Stack:
+  `a → L1
+  b → L1`
+
+
+Reference count increases by `1`.
+
+**Line 4:**
+
+    print(sys.getrefcount(a))
+
+**Expected output:**
+
+`3`
+
+**Why?**
+
+`a`
+
+`b`
+
+Temporary reference from `getrefcount`
+
+**Line 5:**
+
+    del b
+
+`b` reference removed
+
+Reference count decreases by `1`
+
+**Line 6:**
+
+    print(sys.getrefcount(a))
+
+**Output:**
+
+`2`
+
+Still includes the temporary reference.
+
+##### 4️⃣ Why Reference Count Increases
+
+**Because:**
+
+- Variable assignment creates a new reference
+- Function arguments create temporary references
+- Containers (lists, dicts) store references
+- Global variables keep references alive
+- Python never copies objects implicitly.
+
+##### 5️⃣ Why Python Frees Memory Automatically
+
+**Key Mechanism:**
+
+Reference Count → 0 → Immediate Deallocation
+
+**This gives Python:**
+
+- Predictable memory release
+- Deterministic cleanup (unlike JVM)
+
+**Code:**
+
+    x = []
+    del x  # object freed immediately
+
+⚠️ In CPython only (interview detail).
+
+##### 6️⃣ The Big Problem: Circular References
+
+**Code:**
+
+    a = []
+    b = []
+    a.append(b)
+    b.append(a)
+
+**Memory:**
+
+`a → b
+b → a`
+
+**Reference counts:**
+
+- `a references b`
+- `b references a`
+
+**Even if:**
+
+- `del a`
+- `del b`
+
+👉 Reference counts never reach zero.
+
+##### 7️⃣ Secondary GC: Cyclic Garbage Collector
+
+**Python solves this with a secondary GC:**
+
+- Periodically scans heap
+- Detects unreachable cycles
+- Frees them
+
+**This GC is:**
+
+- Generational
+- Non-deterministic
+- Slower than ref counting
+
+##### 8️⃣ Why Circular References Are Special (Interview Gold)
+
+Reference counting cannot detect cycles.
+
+**Why?**
+
+Because objects in a cycle keep each other alive artificially.
+
+**GC must:**
+
+- Pause execution
+- Traverse object graph
+- Detect unreachable subgraphs
+
+This is expensive.
+
+##### 9️⃣ Backend Relevance (VERY Important)
+
+**Memory Leaks in Long-Running APIs:**
+
+**Example:**
+
+- Django / FastAPI service
+- Global caches
+- ORM objects holding circular refs
+- Closures capturing objects
+
+**Result:**
+
+- Heap grows → RAM spikes → OOM → crash
+- 🧟 Zombie Objects in Cache-Heavy Systems
+- LRU caches
+- In-memory dicts
+- Weak reference misuse
+- Objects appear “unused” but:
+- Still referenced somewhere
+- Never collected
+
+Example:🔄 Why Services Are Restarted Periodically
+
+**Even with GC:**
+
+- Fragmentation happens
+- Native extensions leak memory
+- Cyclic GC misses edge cases
+- Memory is not always returned to OS
+
+**Hence:**
+
+- Rolling restarts = safety valve
+
+**🔑 Interview-Ready Summary**
+
+Python primarily uses reference counting for garbage collection, where objects are freed immediately when their reference count reaches zero. However, reference counting cannot handle circular references, so Python uses a secondary cyclic garbage collector to detect and clean unreachable cycles. In long-running backend systems, improper reference handling can cause memory leaks, which is why services often require periodic restarts.
 
 #### Block 5 – Interview-Grade Memory Traps
 
