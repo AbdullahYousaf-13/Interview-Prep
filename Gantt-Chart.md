@@ -1,5 +1,6 @@
-📅 6-Week Gantt Chart (Day-Wise)
-Week 1 – Python Backend Core (Concurrency & Internals)
+# 📅 6-Week Gantt Chart (Day-Wise)
+
+## Week 1 – Python Backend Core (Concurrency & Internals)
 
 Day 1: Python memory model, stack vs heap, reference counting
 
@@ -15,7 +16,7 @@ Day 6: Production FastAPI patterns + security basics
 
 Day 7: Revision + interview-style questions
 
-Week 2 – Performance, Caching & Redis
+## Week 2 – Performance, Caching & Redis
 
 Day 8: Backend performance bottlenecks
 
@@ -31,7 +32,7 @@ Day 13: FastAPI + Redis mini system
 
 Day 14: Review + mock interviews
 
-Week 3 – Databases (SQL + NoSQL)
+## Week 3 – Databases (SQL + NoSQL)
 
 Day 15: MySQL normalization (1NF → 3NF)
 
@@ -47,7 +48,7 @@ Day 20: SQL vs MongoDB trade-offs
 
 Day 21: Design interview practice
 
-Week 4 – OOP, Networking & DevOps
+## Week 4 – OOP, Networking & DevOps
 
 Day 22: OOP concepts (real-world modeling)
 
@@ -63,7 +64,7 @@ Day 27: CI/CD basics
 
 Day 28: Revision + interviews
 
-Week 5 – Cloud, Agentic AI & AI Security
+## Week 5 – Cloud, Agentic AI & AI Security
 
 Day 29: AWS EC2, S3, RDS basics
 
@@ -79,7 +80,7 @@ Day 34: Secure AI-backed backend design
 
 Day 35: Mock interviews
 
-Week 6 – DSA & C++ (Interview Mode)
+## Week 6 – DSA & C++ (Interview Mode)
 
 Day 36–38: Core DSA (arrays, stacks, linked lists, trees)
 
@@ -95,7 +96,7 @@ Day 46: Weak-area patching
 
 Day 47: Final interview drills
 
-🧩 Week 1 – Detailed Plan (Python Backend Core)
+## 🧩 Week 1 – Detailed Plan (Python Backend Core)
 
 This week decides whether you think like a backend engineer or a script writer.
 
