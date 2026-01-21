@@ -96,172 +96,7 @@ Day 46: Weak-area patching
 
 Day 47: Final interview drills
 
-## 🧩 Week 1 – Detailed Plan (Python Backend Core)
-
-This week decides whether you think like a backend engineer or a script writer.
-
-Day 1 – Python Memory Model (Critical)
-
-What you must understand
-
-Stack vs Heap
-
-Reference counting
-
-Garbage collection
-
-Mutable vs immutable behavior
-
-Why interviewers care
-
-“Why does Python consume more memory under load?”
-
-Interview trap
-
-Confusing variables with objects
-
-Task
-
-Write a small script showing reference count changes using sys.getrefcount
-
-Day 2 – GIL (Global Interpreter Lock)
-
-Core concepts
-
-Why GIL exists
-
-CPU-bound vs IO-bound tasks
-
-Why threading doesn’t speed up CPU tasks
-
-Backend reality
-
-GIL is why Gunicorn uses multiple workers
-
-Interview question
-
-“How would you scale a CPU-heavy Python service?”
-
-Correct answer involves:
-
-Multiprocessing
-
-Offloading to C/C++
-
-Horizontal scaling
-
-Day 3 – Threading vs Multiprocessing
-
-Understand
-
-Threads → shared memory, faster context switch
-
-Processes → isolated memory, true parallelism
-
-Backend use cases
-
-Threading → API calls, DB queries
-
-Multiprocessing → ML inference, encryption
-
-Task
-
-Same task implemented with:
-
-ThreadPoolExecutor
-
-ProcessPoolExecutor
-
-Day 4 – Async I/O (asyncio)
-
-Must-know
-
-Event loop
-
-Coroutines
-
-await ≠ thread
-
-Why FastAPI is fast
-
-Async request handling
-
-Non-blocking IO
-
-Interview question
-
-“When should you NOT use async?”
-
-Correct:
-
-CPU-heavy logic
-
-Blocking libraries
-
-Day 5 – FastAPI (Production View)
-
-Topics
-
-Dependency Injection
-
-Middleware
-
-Request lifecycle
-
-Pydantic validation
-
-Security angle
-
-Input validation
-
-Response models
-
-Error handling
-
-Day 6 – Production Backend Patterns
-
-Learn
-
-API versioning
-
-Rate limiting concepts
-
-Logging & monitoring basics
-
-Security focus
-
-Avoid leaking stack traces
-
-Secure headers
-
-API abuse prevention
-
-Day 7 – Review & Interview Drill
-
-You should answer confidently
-
-Why FastAPI over Flask?
-
-Threading vs async?
-
-How does Python scale under load?
-
-Where does security fit in backend design?
-
-🧪 On-Spot Coding Challenges (Week 1)
-Python
-
-Implement async API calling 3 external services concurrently.
-
-Show difference between CPU-bound and IO-bound tasks.
-
-Build a FastAPI endpoint with validation + error handling.
-
-Security/Design
-
-How would you rate-limit login attempts?
-
-How would you prevent brute force on an API?
+---
 
 📚 Free Crash-Course Resources (Curated)
 Python & Backend
@@ -315,3 +150,241 @@ Linking security → backend design
 Explaining trade-offs calmly
 
 Showing production realism
+
+---
+
+## Week 1
+
+### 🧠 DAY 1 — Python Memory Model & Internals (Backend Perspective)
+
+🎯 Day-1 Goal (Very Important)
+
+By the end of today, you should be able to confidently explain:
+
+- Where data lives in Python (stack vs heap)
+- Why Python behaves “weirdly” with mutability
+- Why Python consumes more memory under load
+- How memory decisions affect backend scalability
+
+#### Block 1 – Mental Model (Names vs Objects)
+
+**Core Mindset Shift**
+
+Wrong mental model: Variables store values
+
+Correct mental model: Variables are names that reference objects
+
+Python variables do not contain data. They point to objects that live independently in memory. Assignment creates a new reference, not a copy.
+
+    a = 10
+    b = a
+
+**Explanation:**
+
+`10` is an object
+
+`a` and `b` both reference the same object
+
+No data copying occurs
+
+**Backend Relevance**
+
+- Explains unexpected shared state
+- Prevents cache mutation bugs
+- Helps reason about API side effects
+
+**Interview One-Liner**
+
+Python uses name binding. Variables reference objects rather than storing values directly.
+
+#### Block 2 – Stack vs Heap (Python Reality)
+
+**Stack**
+
+- Function call frames
+
+- Local references
+
+- Fast allocation and deallocation
+
+**Heap**
+
+- All Python objects live here
+
+- Lists, dicts, strings, custom objects
+
+Python does not allocate objects on the stack like C++. Only references exist in stack frames.
+
+    def foo():
+        x = 10
+        y = [1, 2, 3]
+        return y
+
+**Explanation:**
+
+`x` and `y` are references in the stack frame
+
+The `int` and `list` objects live on the heap
+
+Stack frame is destroyed after function return
+
+Objects persist if referenced
+
+**Interview Question**
+
+Does Python store variables on stack or heap?
+
+Correct Answer:
+Python objects are allocated on the heap. Stack frames only hold references.
+
+Block 3 – Mutability & References (Critical)
+
+**Immutable Types:**
+
+- int
+- float
+- str
+- tuple
+- frozenset
+
+Immutable means the object cannot be changed. Any “modification” creates a new object.
+
+    a = 10
+    b = a
+    b += 1
+
+**Explanation:**
+
+`b += 1` creates a new int object
+
+`a` remains unchanged
+
+**Mutable Types:**
+
+- list
+- dict
+- set
+- custom objects
+
+Mutable objects can be modified in place.
+
+    a = [1, 2, 3]
+    b = a
+    b.append(4)
+
+
+**Explanation:**
+
+- Both names reference the same list
+- Mutation affects all references
+
+      Function Argument Trap (Very Common)
+          def add_item(lst):
+              lst.append(100)
+          
+          my_list = []
+          add_item(my_list)
+
+**Explanation:**
+
+- Python passes object references
+- Function mutates the original list
+
+**Backend Impact**
+
+- Shared in-memory state bugs
+- Session corruption
+- Cache poisoning
+
+#### Block 4 – Reference Counting & Garbage Collection
+
+**Primary Memory Management**
+
+- Reference counting
+- Cyclic garbage collection (secondary)
+- Python frees objects automatically when reference count reaches zero.
+
+      import sys
+      
+      a = []
+      print(sys.getrefcount(a))
+      
+      b = a
+      print(sys.getrefcount(a))
+      
+      del b
+      print(sys.getrefcount(a))
+
+**Explanation:**
+
+- Each new reference increases count
+- Deleting references decreases count
+- Object is freed when count becomes zero
+
+**Why Cycles Matter:**
+
+Objects referencing each other cannot be freed by reference counting alone. Python’s cyclic GC handles this.
+
+**Backend Relevance:**
+
+- Memory leaks in long-running services
+- Increased memory under high concurrency
+- Reason services are periodically restarted
+
+#### Block 5 – Interview-Grade Memory Traps
+
+**Shallow vs Deep Copy**
+
+    import copy
+    
+    a = [[1, 2], [3, 4]]
+    b = copy.copy(a)
+    c = copy.deepcopy(a)
+
+**Explanation:**
+
+- Shallow copy duplicates outer container
+- Inner objects are still shared
+- Deep copy duplicates entire object graph
+- Deep copy is expensive
+
+**Use case:**
+
+- Shallow copy for performance
+- Deep copy for isolation
+
+**Default Mutable Argument Trap (Extremely Common):**
+
+    def add_item(item, lst=[]):
+        lst.append(item)
+        return lst
+
+**Problem:**
+
+- Default arguments are evaluated once
+- Same list shared across function calls
+
+**Correct Pattern:**
+
+    def add_item(item, lst=None):
+        if lst is None:
+            lst = []
+        lst.append(item)
+        return lst
+
+**Backend Impact:**
+
+- Data leakage between requests
+- Stateful bugs in APIs
+- Unexpected behavior under load
+
+#### Block 6 – Interview Self-Check
+
+You should be able to answer clearly:
+
+- Why is Python memory-heavy?
+- Why are mutable defaults dangerous?
+- Where do Python objects live?
+- How does Python clean memory automatically?
+- Why does this matter for backend APIs?
+- If you cannot explain these verbally, revision is required.
