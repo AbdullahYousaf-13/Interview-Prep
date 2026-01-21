@@ -176,6 +176,8 @@ Correct mental model: Variables are names that reference objects
 
 Python variables do not contain data. They point to objects that live independently in memory. Assignment creates a new reference, not a copy.
 
+**Code:**
+
     a = 10
     b = a
 
@@ -215,6 +217,8 @@ Python uses name binding. Variables reference objects rather than storing values
 
 Python does not allocate objects on the stack like C++. Only references exist in stack frames.
 
+**Code:**
+
     def foo():
         x = 10
         y = [1, 2, 3]
@@ -249,6 +253,8 @@ Block 3 – Mutability & References (Critical)
 
 Immutable means the object cannot be changed. Any “modification” creates a new object.
 
+**Code:**
+
     a = 10
     b = a
     b += 1
@@ -268,22 +274,25 @@ Immutable means the object cannot be changed. Any “modification” creates a n
 
 Mutable objects can be modified in place.
 
+**Code:**
+
     a = [1, 2, 3]
     b = a
     b.append(4)
-
 
 **Explanation:**
 
 - Both names reference the same list
 - Mutation affects all references
 
-      Function Argument Trap (Very Common)
-          def add_item(lst):
-              lst.append(100)
-          
-          my_list = []
-          add_item(my_list)
+**Code:**
+
+    Function Argument Trap (Very Common)
+      def add_item(lst):
+          lst.append(100)
+      
+      my_list = []
+      add_item(my_list)
 
 **Explanation:**
 
@@ -304,16 +313,18 @@ Mutable objects can be modified in place.
 - Cyclic garbage collection (secondary)
 - Python frees objects automatically when reference count reaches zero.
 
-      import sys
-      
-      a = []
-      print(sys.getrefcount(a))
-      
-      b = a
-      print(sys.getrefcount(a))
-      
-      del b
-      print(sys.getrefcount(a))
+**Code:**
+
+    import sys
+    
+    a = []
+    print(sys.getrefcount(a))
+    
+    b = a
+    print(sys.getrefcount(a))
+    
+    del b
+    print(sys.getrefcount(a))
 
 **Explanation:**
 
@@ -335,6 +346,8 @@ Objects referencing each other cannot be freed by reference counting alone. Pyth
 
 **Shallow vs Deep Copy**
 
+**Code:**
+
     import copy
     
     a = [[1, 2], [3, 4]]
@@ -355,6 +368,8 @@ Objects referencing each other cannot be freed by reference counting alone. Pyth
 
 **Default Mutable Argument Trap (Extremely Common):**
 
+**Code:**
+
     def add_item(item, lst=[]):
         lst.append(item)
         return lst
@@ -365,6 +380,8 @@ Objects referencing each other cannot be freed by reference counting alone. Pyth
 - Same list shared across function calls
 
 **Correct Pattern:**
+
+**Code:**
 
     def add_item(item, lst=None):
         if lst is None:
