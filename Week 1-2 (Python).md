@@ -761,3 +761,6 @@ This allows dynamic typing, resizing, and garbage collection.
 Python’s memory model favors flexibility and safety over raw efficiency, but misunderstanding references, mutability, and garbage collection leads directly to production-level backend bugs.
 
 **`If you cannot explain these 5 verbally, revision is required.`**
+
+---
+
