@@ -909,4 +909,4 @@ This allows dynamic typing, resizing, and garbage collection.
 - Understand GC behavior
 - Restart services strategically
 
-`**If you cannot explain these 5 verbally, revision is required.**`
+**`If you cannot explain these 5 verbally, revision is required.`**
