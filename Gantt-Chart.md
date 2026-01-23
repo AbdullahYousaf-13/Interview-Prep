@@ -798,7 +798,7 @@ Looks innocent ❌, But it’s dangerous.
 
 👉 Same list shared forever
 
-3️⃣ Correct Pattern (Always Use This)
+##### 3️⃣ Correct Pattern (Always Use This)
 def add_item(item, lst=None):
     if lst is None:
         lst = []
