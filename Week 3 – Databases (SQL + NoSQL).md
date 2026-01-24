@@ -1,4 +1,4 @@
-﻿# Week 3 – Databases (SQL + NoSQL)
+# Week 3 – Databases (SQL + NoSQL)
 
 ## Week goals
 - Build production-grade database fundamentals for backend work.
@@ -10,16 +10,9 @@
 Build a clean 3NF schema, explain functional dependencies, and justify trade-offs in an interview.
 
 ### Concepts
-- **1NF (First Normal Form):**
-  - Eliminates repeating groups
-  - All attributes contain atomic (indivisible) values
-  - Each record needs unique identifier (primary key) 
-- **2NF (Second Normal Form):**
-  - Must be in 1NF
-  - No partial dependency (all non-key attributes depend on entire primary key)
-- **3NF (Third Normal Form):**
-  - Must be in 2NF
-  - No transitive dependency (non-key attributes do not depend on other non-key attributes)
+- **1NF (First Normal Form):** Atomic values, no repeating groups, unique rows via a primary key.
+- **2NF (Second Normal Form):** In 1NF and every non-key column depends on the full composite key.
+- **3NF (Third Normal Form):** In 2NF and no non-key column depends on another non-key column.
 
 ### Why normalization matters (anomalies)
 - **Insert anomaly:** Cannot add a new product unless an order exists.
@@ -92,15 +85,9 @@ ALTER TABLE orders
 ```
 
 ### Checkpoint questions (interview-ready)
-
-**Q:** What dependency is broken by 2NF in the example?
-**A:** 2NF breaks the partial dependency where product_name depends only on product_id instead of (order_id, product_id).
-
-**Q:** What transitive dependency exists in the 2NF schema?
-**A:** The 2NF schema still has a transitive dependency where customer_name and customer_phone depend on customer_id, not order_id.
-
-**Q:** Which anomalies are removed after 3NF?
-**A:** After 3NF, update/insert/delete anomalies tied to duplicated customer data are removed.
+- What dependency is broken by 2NF in the example?
+- What transitive dependency exists in the 2NF schema?
+- Which anomalies are removed after 3NF?
 
 ### Joins (quick reference for normalized schemas)
 **Description:**  
@@ -139,10 +126,85 @@ CROSS JOIN sizes;
 ```
 
 ## Day 16: Indexing, transactions, isolation levels
-- Indexing: B-Tree basics, composite indexes, covering indexes, selectivity.
-- Transactions: ACID, autocommit, rollback scenarios.
-- Isolation levels: Read Uncommitted, Read Committed, Repeatable Read, Serializable.
-- Practice: Use EXPLAIN on two queries and explain the plan.
+### Goal
+Understand how MySQL uses indexes for performance and how transactions behave under different isolation levels.
+
+### Indexing fundamentals (MySQL/InnoDB)
+- **B-Tree index:** Default index type for InnoDB. Great for equality and range queries.
+- **Clustered index:** InnoDB stores table data in the primary key B-Tree. Primary key choice affects row layout.
+- **Secondary index:** Stores key + primary key pointer. Lookups may require a secondary index scan + PK lookup.
+- **Composite index:** Index on multiple columns. Most useful when query predicates match the leftmost prefix.
+- **Covering index:** All needed columns are in the index, so MySQL can skip table lookup.
+- **Selectivity:** Higher selectivity (more unique values) means better index usefulness.
+
+### Indexing rules of thumb
+- Put the most selective column first in a composite index when filters are equality checks.
+- For range queries, columns after the range predicate are not used in index ordering.
+- Avoid indexing low-cardinality columns (e.g., boolean) unless combined in composite indexes.
+- Too many indexes slow down writes and increase storage.
+
+### EXPLAIN essentials (what to look for)
+- **type:** access method (best to worst roughly: const, eq_ref, ref, range, index, ALL).
+- **key:** which index was chosen.
+- **rows:** estimated rows scanned (lower is better).
+- **Extra:** `Using index` (covering), `Using where`, `Using temporary`, `Using filesort`.
+
+### Index examples
+```sql
+-- Single-column index
+CREATE INDEX idx_orders_customer_id ON orders (customer_id);
+
+-- Composite index (leftmost prefix rule applies)
+CREATE INDEX idx_orders_customer_date ON orders (customer_id, order_date);
+
+-- Covering index for a reporting query
+CREATE INDEX idx_orders_report ON orders (customer_id, order_date, total_amount);
+```
+
+```sql
+-- Query that can use idx_orders_customer_date
+SELECT order_id, order_date
+FROM orders
+WHERE customer_id = 42
+  AND order_date >= '2024-01-01';
+```
+
+### Transactions (ACID refresher)
+- **Atomicity:** All operations in a transaction succeed or none do.
+- **Consistency:** Data rules (constraints) hold before and after.
+- **Isolation:** Concurrent transactions don't interfere in unsafe ways.
+- **Durability:** Committed data survives crashes.
+
+### Transaction control examples
+```sql
+START TRANSACTION;
+UPDATE accounts SET balance = balance - 500 WHERE id = 10;
+UPDATE accounts SET balance = balance + 500 WHERE id = 20;
+COMMIT;
+```
+
+```sql
+START TRANSACTION;
+UPDATE inventory SET quantity = quantity - 1 WHERE product_id = 'P01';
+-- If anything fails, undo the change
+ROLLBACK;
+```
+
+### Isolation levels (what anomalies they allow)
+- **Read Uncommitted:** Allows dirty reads (rarely used).
+- **Read Committed:** Prevents dirty reads; allows non-repeatable reads.
+- **Repeatable Read (MySQL default):** Prevents non-repeatable reads; may allow phantom reads, but InnoDB mitigates with gap locks.
+- **Serializable:** Strictest; prevents all anomalies but reduces concurrency.
+
+### Common anomalies (interview-ready)
+- **Dirty read:** Reading uncommitted data from another transaction.
+- **Non-repeatable read:** Same query returns different results within a transaction.
+- **Phantom read:** New rows appear in a range query during a transaction.
+
+### Practice tasks
+- Run `EXPLAIN` on two queries and explain why an index was or wasn't used.
+- Design an index for a query with `WHERE customer_id = ? AND created_at BETWEEN ? AND ?`.
+- Explain which isolation level you would choose for payments vs analytics.
 
 ## Day 17: Query optimization and locks
 - Query optimization: avoid SELECT *, limit result sets, use proper predicates.
