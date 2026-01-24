@@ -764,3 +764,203 @@ Python’s memory model favors flexibility and safety over raw efficiency, but m
 
 ---
 
+### Day 2 – GIL & Concurrency (Backend Engineering Perspective)
+
+**Objective**
+
+Understand how Python executes code concurrently, why the Global Interpreter Lock (GIL) exists, and how backend systems scale despite it.
+
+**Why This Day Matters**
+
+Most candidates say “Python is slow” or “GIL blocks threads” without understanding implications. Interviewers are testing whether you can design scalable backend systems despite Python’s constraints.
+
+**Global Interpreter Lock (GIL)**
+
+The Global Interpreter Lock is a mutex that ensures only one thread executes Python bytecode at a time in a single process.
+
+**Why the GIL Exists**
+
+- Simplifies memory management
+- Makes reference counting thread-safe
+- Avoids complex locking around objects
+
+Python chose simplicity and safety over raw CPU parallelism.
+
+**What the GIL Does NOT Mean**
+
+- Python cannot do concurrency ❌
+- Python cannot scale ❌
+- Python is unusable for backend ❌
+
+The GIL mainly affects CPU-bound tasks, not IO-bound tasks.
+
+**CPU-Bound vs IO-Bound Tasks**
+
+**CPU-Bound:**
+
+- Heavy computation
+- Encryption
+- Image processing
+- ML inference
+
+Threads do NOT help due to the GIL.
+
+**IO-Bound:**
+
+- API calls
+- Database queries
+- File reads/writes
+- Network requests
+
+Threads and async work very well here.
+
+**Interview Question (Very Common)**
+
+Why doesn’t threading speed up CPU-bound tasks in Python?
+
+**Correct Answer:**
+
+Because the GIL allows only one thread to execute Python bytecode at a time, CPU-bound threads compete for the GIL instead of running in parallel.
+
+**Threading in Python**
+
+What Threading Is Good For:
+
+- Concurrent IO operations
+- Improving latency, not throughput
+- Handling multiple waiting tasks
+
+**Interview-Relevant Code:**
+
+    from concurrent.futures import ThreadPoolExecutor
+    import time
+    
+    def io_task():
+        time.sleep(2)
+        return "done"
+    
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        results = list(executor.map(lambda _: io_task(), range(3)))
+
+**Explanation:**
+
+- Threads release the GIL during IO
+- Multiple IO waits overlap
+- Total runtime is reduced
+
+**Multiprocessing in Python**
+
+Why Multiprocessing Works:
+
+- Each process has its own Python interpreter
+- Each process has its own GIL
+- True parallelism is achieved
+
+**Interview-Relevant Code**
+
+    from concurrent.futures import ProcessPoolExecutor
+    
+    def cpu_task(x):
+        return x * x
+    
+    with ProcessPoolExecutor(max_workers=4) as executor:
+        results = list(executor.map(cpu_task, range(10)))
+
+**Explanation:**
+
+- Each process runs on a separate CPU core
+- Memory is not shared
+- Higher overhead than threads
+
+| **Aspect**  | **Threading**  | **Multiprocessing** |
+| ----------- | -------------- | ------------------- |
+| Parallelism | No (CPU-bound) | Yes                 |
+| Memory      | Shared         | Isolated            |
+| Overhead    | Low            | High                |
+| Use Case    | IO-bound tasks | CPU-bound tasks     |
+
+Interview takeaway:
+Use threads for IO, processes for CPU.
+
+Async I/O (Why FastAPI Is Fast)
+What Async Really Is
+
+Async is single-threaded concurrency using an event loop. Tasks voluntarily yield control when waiting.
+
+Async does NOT mean parallel execution.
+
+Event Loop Concept
+
+Runs tasks
+
+Pauses tasks on await
+
+Switches efficiently without threads
+
+Interview-Relevant Async Code
+import asyncio
+
+async def fetch_data():
+    await asyncio.sleep(2)
+    return "data"
+
+async def main():
+    results = await asyncio.gather(
+        fetch_data(),
+        fetch_data(),
+        fetch_data()
+    )
+    print(results)
+
+asyncio.run(main())
+
+
+Explanation:
+
+No threads created
+
+No blocking
+
+Excellent for high-concurrency APIs
+
+When NOT to Use Async
+
+CPU-heavy logic
+
+Blocking libraries
+
+Legacy synchronous SDKs
+
+Interview one-liner:
+Async improves concurrency for IO-bound workloads, not CPU-bound workloads.
+
+Backend Scaling Reality (Production)
+
+FastAPI uses async for IO efficiency
+
+Gunicorn runs multiple worker processes
+
+Each worker has its own GIL
+
+Horizontal scaling handles high load
+
+This is how Python scales in production.
+
+Common Interview Traps
+Trap 1
+
+“Async is faster than threads”
+Correct:
+Async is more efficient for IO, not inherently faster.
+
+Trap 2
+
+“GIL makes Python useless”
+Correct:
+The GIL affects CPU-bound threading, not IO-bound backend workloads.
+
+Final Interview Summary
+
+Python’s GIL prevents parallel execution of CPU-bound threads but enables safe memory management. Backend systems overcome this using async IO, multiprocessing, and horizontal scaling.
+
+If you can explain this calmly, you pass most backend interviews.
