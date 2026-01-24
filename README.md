@@ -616,7 +616,7 @@ Joins combine data from multiple tables based on related columns. MySQL supports
 
 **Types Explained:**  
 - **INNER JOIN:** Returns only matching rows from both tables  
-- **LEFT JOIN:** Returns all rows from the left table + matches from right  
+- **LEFT JOIN:** Returns all rows from the left table + matches from right 
 - **RIGHT JOIN:** Returns all rows from the right table + matches from left  
 - **CROSS JOIN:** Cartesian product (all possible combinations)  
 - **SELF JOIN:** Joins a table to itself  

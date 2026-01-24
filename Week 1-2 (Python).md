@@ -927,88 +927,102 @@ Processes = good for CPU work, true parallelism.
 | Overhead    | Low            | High                |
 | Use Case    | IO-bound tasks | CPU-bound tasks     |
 
-Interview takeaway:
+**Interview takeaway:**
+
 Use threads for IO, processes for CPU.
 
-Async I/O (Why FastAPI Is Fast)
-What Async Really Is
+**Async I/O (Why FastAPI Is Fast)**
 
-Async is single-threaded concurrency using an event loop. Tasks voluntarily yield control when waiting.
+What Async Really Is:
 
-Async does NOT mean parallel execution.
+Async is single-threaded concurrency using an event loop. Tasks voluntarily yield control when waiting. Async does NOT mean parallel execution.
 
-Event Loop Concept
+**Event Loop Concept:**
 
-Runs tasks
+- Runs tasks
+- Pauses tasks on await
+- Switches efficiently without threads
 
-Pauses tasks on await
+**Interview-Relevant Async Code**
 
-Switches efficiently without threads
+    # Async library that provides the event loop and coroutine tools
+    import asyncio
+    
+    # Define an async function that simulates an IO wait and returns data
+    async def fetch_data():
+        # Yield control to the loop for ~2s, letting other tasks run
+        await asyncio.sleep(2)
+        # Return a result after the wait
+        return "data"
+    
+    # Top-level coroutine that coordinates other coroutines
+    async def main():
+        # Schedule three independent fetches at once, wait for all to finish
+        results = await asyncio.gather(
+            fetch_data(),
+            fetch_data(),
+            fetch_data()
+        )
+        # Display the list of returned values
+        print(results)
+    
+    # Start the event loop and run main() until it completes
+    asyncio.run(main())
 
-Interview-Relevant Async Code
-import asyncio
+**Pseudocode:**
 
-async def fetch_data():
-    await asyncio.sleep(2)
-    return "data"
+    import async tools
+    
+    define async fetch_data:
+        wait non-blocking for 2 seconds
+        return "data"
+    
+    define async main:
+        start three fetch_data tasks at the same time
+        wait until all three finish
+        print the list of results
+    
+    start event loop and run main until done
 
-async def main():
-    results = await asyncio.gather(
-        fetch_data(),
-        fetch_data(),
-        fetch_data()
-    )
-    print(results)
+**Explanation:**
 
-asyncio.run(main())
+- No threads created
+- No blocking
+- Excellent for high-concurrency APIs
 
+**When NOT to Use Async:**
 
-Explanation:
+- CPU-heavy logic
+- Blocking libraries
+- Legacy synchronous SDKs
 
-No threads created
+**Interview one-liner:**
 
-No blocking
-
-Excellent for high-concurrency APIs
-
-When NOT to Use Async
-
-CPU-heavy logic
-
-Blocking libraries
-
-Legacy synchronous SDKs
-
-Interview one-liner:
 Async improves concurrency for IO-bound workloads, not CPU-bound workloads.
 
-Backend Scaling Reality (Production)
+**Backend Scaling Reality (Production)**
 
-FastAPI uses async for IO efficiency
-
-Gunicorn runs multiple worker processes
-
-Each worker has its own GIL
-
-Horizontal scaling handles high load
+- FastAPI uses async for IO efficiency
+- Gunicorn runs multiple worker processes
+- Each worker has its own GIL
+- Horizontal scaling handles high load
 
 This is how Python scales in production.
 
-Common Interview Traps
-Trap 1
+**Common Interview Traps**
 
-“Async is faster than threads”
-Correct:
+Trap 1:    
+“Async is faster than threads” X
+Correct:    
 Async is more efficient for IO, not inherently faster.
 
-Trap 2
-
-“GIL makes Python useless”
-Correct:
+Trap 2:    
+“GIL makes Python useless” X
+Correct:    
 The GIL affects CPU-bound threading, not IO-bound backend workloads.
 
-Final Interview Summary
+**Final Interview Summary**
 
 Python’s GIL prevents parallel execution of CPU-bound threads but enables safe memory management. Backend systems overcome this using async IO, multiprocessing, and horizontal scaling.
 
-If you can explain this calmly, you pass most backend interviews.
+`**If you can explain this calmly, you pass most backend interviews.**`
