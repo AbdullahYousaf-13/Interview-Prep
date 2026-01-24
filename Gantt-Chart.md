@@ -2,99 +2,83 @@
 
 ## Week 1 – Python Backend Core (Concurrency & Internals)
 
-Day 1: Python memory model, stack vs heap, reference counting
+W1-D1: Python Memory Model & Internals
 
-Day 2: GIL deep dive, CPU-bound vs IO-bound problems
+W1-D2: GIL, Threading, Multiprocessing
 
-Day 3: Threading vs Multiprocessing (real backend scenarios)
+W1-D3: GIL, Threading, Multiprocessing
 
-Day 4: Async I/O, asyncio, event loop
+W1-D4: GIL, Threading, Multiprocessing
 
-Day 5: FastAPI internals, request lifecycle
+W1-D5: AsyncIO & Event Loop
 
-Day 6: Production FastAPI patterns + security basics
+## Week 2 – FastAPI Core & Security
 
-Day 7: Revision + interview-style questions
+W2-D1: AsyncIO & Event Loop
 
-## Week 2 – Performance, Caching & Redis
+W2-D2: FastAPI Core & Lifecycle
 
-Day 8: Backend performance bottlenecks
+W2-D3: FastAPI Core & Lifecycle
 
-Day 9: Redis fundamentals
+W2-D4: FastAPI Security & Prod Patterns
 
-Day 10: Caching strategies (TTL, write-through, write-back)
+W2-D5: FastAPI Security & Prod Patterns
 
-Day 11: Rate limiting & session storage
+## Week 3 – Redis & Caching
 
-Day 12: Consistency vs performance trade-offs
+W3-D1: Redis Fundamentals
 
-Day 13: FastAPI + Redis mini system
+W3-D2: Redis Fundamentals
 
-Day 14: Review + mock interviews
+W3-D3: Caching Strategies
 
-## Week 3 – Databases (SQL + NoSQL)
+W3-D4: Caching Strategies
 
-Day 15: MySQL normalization (1NF → 3NF)
+W3-D5: Rate Limiting & Sessions
 
-Day 16: Indexing, transactions, isolation levels
+## Week 4 – Databases (SQL + NoSQL)
 
-Day 17: Query optimization & locks
+W4-D1: Rate Limiting & Sessions
 
-Day 18: MongoDB schema design
+W4-D2: MySQL Internals & Indexing
 
-Day 19: Aggregation pipelines
+W4-D3: MySQL Internals & Indexing
 
-Day 20: SQL vs MongoDB trade-offs
+W4-D4: MySQL Internals & Indexing
 
-Day 21: Design interview practice
+W4-D5: MongoDB Schema & Aggregation
 
-## Week 4 – OOP, Networking & DevOps
+## Week 5 – OOP, Networking & DevOps
 
-Day 22: OOP concepts (real-world modeling)
+W5-D1: MongoDB Schema & Aggregation
 
-Day 23: OOP interview traps
+W5-D2: MongoDB Schema & Aggregation
 
-Day 24: Networking for backend engineers
+W5-D3: OOP Design Interviews
 
-Day 25: Docker fundamentals
+W5-D4: OOP Design Interviews
 
-Day 26: Dockerizing FastAPI securely
+W5-D5: Networking + Docker
 
-Day 27: CI/CD basics
+## Week 6 – Cloud, Agentic AI & DSA
 
-Day 28: Revision + interviews
+W6-D1: Networking + Docker
 
-## Week 5 – Cloud, Agentic AI & AI Security
+W6-D2: Networking + Docker
 
-Day 29: AWS EC2, S3, RDS basics
+W6-D3: AWS Basics & IAM
 
-Day 30: IAM & attack surface
+W6-D4: AWS Basics & IAM
 
-Day 31: Agentic AI basics
+W6-D5: Agentic AI + AI Security
 
-Day 32: Prompt injection & guardrails
+W6-D4: Agentic AI + AI Security
 
-Day 33: AI threat modeling
+W6-D5: Agentic AI + AI Security
 
-Day 34: Secure AI-backed backend design
+W6-D6: DSA Core + C++ Practice
 
-Day 35: Mock interviews
-
-## Week 6 – DSA & C++ (Interview Mode)
-
-Day 36–38: Core DSA (arrays, stacks, linked lists, trees)
-
-Day 39–40: Graphs, sorting, searching
-
-Day 41–42: Recursion & DP
-
-Day 43–44: On-spot C++ coding
-
-Day 45: Full backend + DSA mock interview
-
-Day 46: Weak-area patching
-
-Day 47: Final interview drills
+W6-D7: DSA Core + C++ Practice
 
 ---
 
