@@ -1,4 +1,4 @@
-﻿# Week 3 – Databases (SQL + NoSQL)
+# Week 3 – Databases (SQL + NoSQL)
 
 ## Week goals
 - Build production-grade database fundamentals for backend work.
