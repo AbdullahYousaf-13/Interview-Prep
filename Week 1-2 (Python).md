@@ -826,51 +826,99 @@ Because the GIL allows only one thread to execute Python bytecode at a time, CPU
 
 What Threading Is Good For:
 
-- Concurrent IO operations
-- Improving latency, not throughput
-- Handling multiple waiting tasks
+- Best for IO-bound work: network calls, disk reads, waiting on APIs.
+- Helps reduce latency (total wait time), not CPU throughput.
+
+Why it helps with IO:
+
+- Threads can overlap waiting.
+- While one thread waits for IO, another can run.
+- In CPython, threads release the GIL during IO, so waiting doesn’t block others.
 
 **Interview-Relevant Code:**
 
+    # Import the thread pool helper
     from concurrent.futures import ThreadPoolExecutor
+    # Import time utilities (for sleep)
     import time
-    
+
+    # Define a function that simulates IO work
     def io_task():
+        # Wait for 2 seconds to mimic IO delay
         time.sleep(2)
+        # Return a result after the wait
         return "done"
-    
+
+    # Create a pool of up to 3 worker threads
     with ThreadPoolExecutor(max_workers=3) as executor:
+        # Run io_task 3 times in parallel and collect results
         results = list(executor.map(lambda _: io_task(), range(3)))
+
+**Pseudocode:**
+
+    define io_task:
+        wait for IO (sleep or network)
+        return "done"
+
+    create thread pool with N workers
+    submit the same io_task N times
+    wait for all to finish
+    collect results
+
 
 **Explanation:**
 
-- Threads release the GIL during IO
-- Multiple IO waits overlap
-- Total runtime is reduced
+- Each task waits for IO.
+- Threads overlap those waits.
+- Total time is closer to the longest single wait, not the sum.
 
 **Multiprocessing in Python**
 
-Why Multiprocessing Works:
+Why it works for CPU:
 
-- Each process has its own Python interpreter
-- Each process has its own GIL
-- True parallelism is achieved
+- Each process has its own Python interpreter and its own GIL.
+- So CPU work runs in parallel on multiple cores.
+
+Tradeoffs:
+
+- More overhead than threads.
+- Memory isn’t shared by default.
 
 **Interview-Relevant Code**
 
+    # Import the process pool helper
     from concurrent.futures import ProcessPoolExecutor
-    
+
+    # Define a function that does CPU work
     def cpu_task(x):
+        # Compute the square of x
         return x * x
-    
+
+    # Create a pool of up to 4 worker processes
     with ProcessPoolExecutor(max_workers=4) as executor:
+        # Run cpu_task on numbers 0..9 in parallel and collect results
         results = list(executor.map(cpu_task, range(10)))
+        
+**Pseudocode:**
+
+    define cpu_task(x):
+        return x * x
+
+    create process pool with N workers
+    submit cpu_task for a list of inputs
+    wait for all to finish
+    collect results
 
 **Explanation:**
 
 - Each process runs on a separate CPU core
 - Memory is not shared
 - Higher overhead than threads
+
+**One-line summary:**
+
+Threads = good for IO waits, lower latency.
+Processes = good for CPU work, true parallelism.
 
 | **Aspect**  | **Threading**  | **Multiprocessing** |
 | ----------- | -------------- | ------------------- |
