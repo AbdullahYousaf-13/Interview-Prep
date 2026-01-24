@@ -129,10 +129,10 @@ CROSS JOIN sizes;
 ### Goal
 Understand how MySQL uses indexes for performance and how transactions behave under different isolation levels.
 
-### Indexing fundamentals (MySQL/InnoDB)
-- **B-Tree index:** Default index type for InnoDB. Great for equality and range queries.
-- **Clustered index:** InnoDB stores table data in the primary key B-Tree. Primary key choice affects row layout.
-- **Secondary index:** Stores key + primary key pointer. Lookups may require a secondary index scan + PK lookup.
+### Indexing fundamentals (SQL/MySQL)
+- **B-Tree index:** Common default index type. Great for equality and range queries.
+- **Primary key index:** Ensures uniqueness and is used as the row identifier in many engines.
+- **Secondary index:** Separate index structure that can speed up lookups on non-PK columns.
 - **Composite index:** Index on multiple columns. Most useful when query predicates match the leftmost prefix.
 - **Covering index:** All needed columns are in the index, so MySQL can skip table lookup.
 - **Selectivity:** Higher selectivity (more unique values) means better index usefulness.
@@ -193,7 +193,7 @@ ROLLBACK;
 ### Isolation levels (what anomalies they allow)
 - **Read Uncommitted:** Allows dirty reads (rarely used).
 - **Read Committed:** Prevents dirty reads; allows non-repeatable reads.
-- **Repeatable Read (MySQL default):** Prevents non-repeatable reads; may allow phantom reads, but InnoDB mitigates with gap locks.
+- **Repeatable Read (common default):** Prevents non-repeatable reads; may allow phantom reads.
 - **Serializable:** Strictest; prevents all anomalies but reduces concurrency.
 
 ### Common anomalies (interview-ready)
