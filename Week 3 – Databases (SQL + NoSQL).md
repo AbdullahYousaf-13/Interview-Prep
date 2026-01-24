@@ -10,9 +10,16 @@
 Build a clean 3NF schema, explain functional dependencies, and justify trade-offs in an interview.
 
 ### Concepts
-- **1NF (First Normal Form):** Atomic values, no repeating groups, unique rows via a primary key.
-- **2NF (Second Normal Form):** In 1NF and every non-key column depends on the full composite key.
-- **3NF (Third Normal Form):** In 2NF and no non-key column depends on another non-key column.
+- **1NF (First Normal Form):**
+  - Eliminates repeating groups
+  - All attributes contain atomic (indivisible) values
+  - Each record needs unique identifier (primary key) 
+- **2NF (Second Normal Form):**
+  - Must be in 1NF
+  - No partial dependency (all non-key attributes depend on entire primary key)
+- **3NF (Third Normal Form):**
+  - Must be in 2NF
+  - No transitive dependency (non-key attributes do not depend on other non-key attributes)
 
 ### Why normalization matters (anomalies)
 - **Insert anomaly:** Cannot add a new product unless an order exists.
@@ -85,9 +92,15 @@ ALTER TABLE orders
 ```
 
 ### Checkpoint questions (interview-ready)
-- What dependency is broken by 2NF in the example?
-- What transitive dependency exists in the 2NF schema?
-- Which anomalies are removed after 3NF?
+
+**Q:** What dependency is broken by 2NF in the example?
+**A:** 2NF breaks the partial dependency where product_name depends only on product_id instead of (order_id, product_id).
+
+**Q:** What transitive dependency exists in the 2NF schema?
+**A:** The 2NF schema still has a transitive dependency where customer_name and customer_phone depend on customer_id, not order_id.
+
+**Q:** Which anomalies are removed after 3NF?
+**A:** After 3NF, update/insert/delete anomalies tied to duplicated customer data are removed.
 
 ### Joins (quick reference for normalized schemas)
 **Description:**  
