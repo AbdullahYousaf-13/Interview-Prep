@@ -897,9 +897,6 @@ C1       | ProfA
 C2       | ProfB
 ```
 
-**1NF to BCNF Summary:**  
-Normalization reduces data redundancy. MySQL does not enforce normalization rules automatically - it is the responsibility of the developer.
-
 **MySQL Implementation:**
 ```sql
 -- Before Normalization (all in one table)
@@ -939,6 +936,9 @@ CREATE TABLE order_items (
   FOREIGN KEY (product_id) REFERENCES products(id)
 ) ENGINE=InnoDB;
 ```
+
+**1NF to BCNF Summary:**  
+Normalization reduces data redundancy. MySQL does not enforce normalization rules automatically - it is the responsibility of the developer.
 
 ## 3. MySQL Indexing
 **Description:**  
