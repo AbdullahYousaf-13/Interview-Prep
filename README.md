@@ -1175,3 +1175,84 @@ Data Link + Physical → Network Access
 
 ---
 ---
+
+# Rough Notes
+
+## Frontend Basics:
+
+### html (structure)
+
+#### html 5
+
+### css (style)
+
+#### SCSS 
+wrappers of css, to ease css
+whats the basic structure and whats the bennifit
+
+### js functionality
+Browser understands only vanila js and we code in latest js or frameworks
+Transpiler converts one high level to another
+
+#### Frameworks
+React, Vue, next, nuxt
+
+#### React
+
+React uses virtual DOM, updates specific part of DOM using diffing alogorithm.
+Its a liberary, not a framework, no hard and fast rule, just defined by person created it.
+Fraework is extensive and liberary is a littlebit consise.
+
+A Single Page Application (SPA) is a web app that loads one HTML page once, then updates content dynamically (with JavaScript) without full page reloads.
+Example:
+Gmail (web)
+Google Maps
+Facebook
+Twitter/X (web app)
+In your React app, clicking from Home to Create Blog changes the view using React Router, but the browser doesn’t fully reload the page. That’s an SPA behavior.
+
+In an MPA, each navigation (clicking a link) loads a new HTML page from the server.
+Examples:
+Wikipedia (most article-to-article navigation is full page loads)
+Amazon (many flows still do server-rendered page transitions)
+Traditional WordPress news/blog sites (each post/category page is a separate load)
+
+Declarative: You describe what the UI/state should look like, not step-by-step how to change it.
+React example:
+{isLoggedIn ? <Dashboard /> : <Login />}
+You declare the desired output based on state.
+
+Imperative: You write exact instructions for how to do it step by step.
+JS DOM example:
+const el = document.getElementById("status");
+el.textContent = "Logged in";
+el.style.color = "green";
+el.style.display = "block";
+In frontend interviews: React is mostly declarative, while direct DOM manipulation is imperative.
+
+State: 
+In js we store in variable in react we sotre things in states
+In React, state is data that a component remembers and can change over time.
+When state changes, React re-renders the component UI.
+
+Example (CyberSentinel-style):
+
+const [alerts, setAlerts] = useState([]);
+const [isLoading, setIsLoading] = useState(true);
+alerts and isLoading are state values.
+setAlerts and setIsLoading update them.
+If new alerts come from API, updating state automatically updates what user sees.
+
+Scenario: SOC analyst opens dashboard.
+State: “No alerts loaded” → “Loading” → “12 alerts loaded”.
+UI changes at each stage.
+
+Props
+properties every component has some, if a component need something
+
+
+
+
+
+
+
