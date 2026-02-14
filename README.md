@@ -1250,9 +1250,116 @@ UI changes at each stage.
 Props
 properties every component has some, if a component need something
 
+---
 
+Use this **90-minute rapid-fire React prep flow**.
 
+1. **What is React? Why use it?**  
+A: A UI library for building component-based, reusable, state-driven interfaces.  
+Example: `Navbar`, `Sidebar`, `AlertCard` as separate components.
 
+2. **What is the difference between DOM and Virtual DOM?**  
+A: DOM is the real browser tree. Virtual DOM is React�s in-memory copy. React diffs old/new VDOM, then updates only changed DOM nodes.
 
+3. **How does React update UI efficiently?**  
+A: Reconciliation + batching. On state/props change, React re-renders component tree virtually, finds minimal diff, patches DOM.
 
+4. **What are Props?**  
+A: Read-only inputs passed from parent to child.  
+Example:
+```jsx
+<AlertCard severity="high" title="SQL Injection" />
+```
+
+5. **What is State?**  
+A: Mutable component data that triggers re-render when updated.  
+Example:
+```jsx
+const [count, setCount] = useState(0);
+```
+
+6. **Props vs State?**  
+A: Props are external + immutable in child. State is internal + updatable via setter.
+
+7. **Why is immutability important in React?**  
+A: React relies on reference changes to detect updates. Mutating old object can skip render or cause bugs.  
+Bad:
+```js
+user.name = "Ali";
+setUser(user);
+```
+Good:
+```js
+setUser({ ...user, name: "Ali" });
+```
+
+8. **What is `key` in lists and why needed?**  
+A: Stable identity for list items so React can correctly match, reorder, and preserve component state.  
+Bad key: array index (if list can reorder).  
+Good key: unique DB id.
+
+9. **What happens if key is wrong?**  
+A: Incorrect item reuse, input state jumping, unexpected UI bugs.
+
+10. **When to use local state vs global state vs localStorage?**  
+A:  
+- Local state: UI-specific, component scope (modal open, input text).  
+- Global state: shared across distant components (auth user, theme, cart).  
+- localStorage: persistence across refresh/browser restart (token, preferences).  
+Rule: keep state as local as possible first.
+
+11. **Can localStorage replace React state?**  
+A: No. localStorage doesn�t trigger re-render. Usually sync it with state.
+
+12. **How to simulate lifecycle using `useEffect`?**  
+A:  
+- Mount: `useEffect(() => { ... }, [])`  
+- Update (on specific value): `useEffect(() => { ... }, [value])`  
+- Unmount cleanup:
+```jsx
+useEffect(() => {
+  const id = setInterval(fetchData, 5000);
+  return () => clearInterval(id);
+}, []);
+```
+
+13. **Most common hooks to know?**  
+A: `useState`, `useEffect`, `useRef`, `useMemo`, `useCallback`, `useContext`.
+
+14. **`useRef` use case?**  
+A: Persist mutable value without re-render, or access DOM element directly.
+
+15. **`useMemo` and `useCallback` difference?**  
+A:  
+- `useMemo`: memoize computed value.  
+- `useCallback`: memoize function reference.  
+Both are performance tools, not default tools.
+
+16. **Why avoid directly mutating state arrays/objects?**  
+A: Can cause stale UI and hard-to-debug side effects. Use spread/map/filter.
+
+17. **React interview mini coding task**  
+Q: �Render alert list and toggle read status.�  
+Expected:
+- List render with stable `key`
+- State update immutably
+- Props for child item
+- Optional persistence to localStorage
+
+18. **Follow-up interview question**  
+Q: �Data resets on refresh. What to do?�  
+A: Hydrate initial state from localStorage + sync with effect.
+
+19. **One-line mental model**  
+A: �UI = f(state, props)�. Change state immutably, React handles efficient DOM updates.
+
+20. **Final 10-min drill**  
+Ask them to explain verbally:  
+- VDOM diff  
+- key importance  
+- state vs props  
+- local/global/persistent data choice  
+- mount/update/unmount with `useEffect`
+
+---
 
